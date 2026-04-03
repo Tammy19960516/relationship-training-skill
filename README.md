@@ -1,4 +1,4 @@
-# 恋爱训练.skill 💘
+                                                    # 恋爱训练.skill 💘
 ### Relationship Training Camp · A Claude Code Skill
 
 > 上传你和 crush 的聊天记录，AI 模拟 ta 的性格，你在安全沙盒里反复练习——找到真诚又有效的沟通方式。
