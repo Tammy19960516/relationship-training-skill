@@ -1,4 +1,4 @@
-# SKILL.md — 舔狗训练营 · 训练沙盒总控
+# SKILL.md — 恋爱训练营 · 训练沙盒总控
 # Crush Training Camp · Sandbox Master Control
 
 ## Language Rule
