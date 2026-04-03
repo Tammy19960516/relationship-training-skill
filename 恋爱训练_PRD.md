@@ -1,8 +1,8 @@
-# 舔狗训练营.skill — 产品需求文档（PRD）
+# 恋爱训练.skill — 产品需求文档（PRD）
 
 ## 产品定位
 
-舔狗训练营.skill 是一个运行在 Claude Code 上的 meta-skill。  
+恋爱训练.skill 是一个运行在 Claude Code 上的 meta-skill。  
 用户上传与 crush 的聊天记录，系统自动构建 crush 的 Persona，并提供沉浸式对话训练环境——让用户在安全沙盒里反复练习，找到最适合自己的沟通方式。
 
 > **核心理念**：不是教你「套路」，而是通过真实模拟帮你理解对方的沟通风格，找到真诚又有效的表达方式。
@@ -158,7 +158,7 @@ exes/
 
 ## 与前任.skill 的对比
 
-| 维度 | 前任.skill | 舔狗训练营.skill |
+| 维度 | 前任.skill | 恋爱训练.skill |
 |------|-----------|----------------|
 | 核心目的 | 情感疗愈与回忆 | 沟通练习与成长 |
 | Part A | Relationship Memory（关系记忆） | Crush Persona（对方模拟） |
