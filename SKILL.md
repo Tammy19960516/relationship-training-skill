@@ -1,4 +1,4 @@
-# SKILL.md — 恋爱训练营 · 训练沙盒总控
+# SKILL.md — 舔狗训练营 · 训练沙盒总控
 # Crush Training Camp · Sandbox Master Control
 
 ## Language Rule
@@ -37,7 +37,8 @@ SKILL.md（本文件）
 ├── scene_preset.md     # 6个场景预设库
 ├── scenario_router.md  # 场景路由与初始化
 ├── session_reviewer.md # 训练复盘报告生成器
-└── runtime_orchestrator.md  # 运行时总控规则
+├── runtime_orchestrator.md  # 运行时总控规则
+└── memory.md           # 记忆存储模块（持久化档案）
 ```
 
 ---
