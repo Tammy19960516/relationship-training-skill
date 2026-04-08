@@ -24,10 +24,10 @@ Claude Code 从 git 仓库根目录的 `.claude/skills/` 查找 skill。请在�
 ```bash
 # 安装到当前项目（在 git 仓库根目录执行）
 mkdir -p .claude/skills
-git clone https://github.com/Tammy19960516/relationship-training-skill .claude/skills/crush-training
+git clone https://github.com/TammyTan516/relationship-training-skill .claude/skills/crush-training
 
 # 或安装到全局（所有项目都能用）
-git clone https://github.com/Tammy19960516/relationship-training-skill ~/.claude/skills/crush-training
+git clone https://github.com/TammyTan516/relationship-training-skill ~/.claude/skills/crush-training
 ```
 
 ---
@@ -117,10 +117,10 @@ A Claude Code skill that simulates your crush's personality based on your chat h
 ```bash
 # Project-level install
 mkdir -p .claude/skills
-git clone https://github.com/Tammy19960516/relationship-training-skill .claude/skills/crush-training
+git clone https://github.com/TammyTan516/relationship-training-skill .claude/skills/crush-training
 
 # Global install
-git clone https://github.com/Tammy19960516/relationship-training-skill ~/.claude/skills/crush-training
+git clone https://github.com/TammyTan516/relationship-training-skill ~/.claude/skills/crush-training
 ```
 
 ### Quick Start
