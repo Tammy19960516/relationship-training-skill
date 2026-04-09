@@ -298,34 +298,14 @@ function showToast(msg) {
 }
 
 async function callAI(system, messages, maxTokens) {
-  if (provider === 'anthropic') {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: maxTokens || 400, system, messages })
-    });
-    if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || '请求失败'); }
-    const d = await r.json();
-    return d.content[0].text;
-  } else if (provider === 'openai') {
-    const r = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: maxTokens || 400, messages: [{ role: 'system', content: system }, ...messages] })
-    });
-    if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || '请求失败'); }
-    const d = await r.json();
-    return d.choices[0].message.content;
-  } else if (provider === 'deepseek') {
-    const r = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-      body: JSON.stringify({ model: 'deepseek-chat', max_tokens: maxTokens || 400, messages: [{ role: 'system', content: system }, ...messages] })
-    });
-    if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || '请求失败'); }
-    const d = await r.json();
-    return d.choices[0].message.content;
-  }
+  const r = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ provider, apiKey, system, messages, maxTokens: maxTokens || 400 })
+  });
+  if (!r.ok) { const e = await r.json(); throw new Error(e.error || '请求失败'); }
+  const d = await r.json();
+  return d.text;
 }
 
 // Alias for backward compatibility
