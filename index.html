@@ -33,6 +33,10 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--cream); color:
 .api-input:focus { border-color: var(--pink-dark); }
 .api-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.5; }
 .api-hint a { color: var(--pink-dark); }
+.provider-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+.provider-tab { flex: 1; padding: 0.5rem 0.4rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.75rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--cream); color: var(--text-muted); }
+.provider-tab.active { border-color: var(--pink-dark); background: var(--pink-light); color: var(--pink-dark); font-weight: 500; }
+.provider-icon { font-size: 0.8rem; }
 .btn-primary { background: var(--pink-dark); color: white; border: none; border-radius: 50px; padding: 0.85rem 2.5rem; font-size: 1rem; font-family: 'Noto Sans SC', sans-serif; cursor: pointer; transition: all 0.2s; }
 .btn-primary:hover { background: var(--rose); transform: translateY(-1px); }
 .landing-footer { font-size: 0.75rem; color: var(--text-muted); margin-top: 2rem; max-width: 320px; line-height: 1.6; }
@@ -145,9 +149,15 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--cream); color:
   <h1 class="landing-title">恋爱训练营</h1>
   <p class="landing-sub">上传 crush 的聊天记录<br>AI 模拟 ta 的性格<br>在安全沙盒里反复练习</p>
   <div class="api-card">
-    <div class="api-label">ANTHROPIC API KEY</div>
+    <div class="api-label">选择 AI 提供商</div>
+    <div class="provider-tabs">
+      <div class="provider-tab active" onclick="switchProvider('anthropic', this)">🟠 Claude</div>
+      <div class="provider-tab" onclick="switchProvider('openai', this)">🟢 GPT</div>
+      <div class="provider-tab" onclick="switchProvider('deepseek', this)">🔵 DeepSeek</div>
+    </div>
+    <div class="api-label" id="key-label">ANTHROPIC API KEY</div>
     <input class="api-input" type="password" id="api-key-input" placeholder="sk-ant-..." />
-    <div class="api-hint">Key 仅在本地使用，不会上传到任何服务器。<br><a href="https://console.anthropic.com" target="_blank">没有 Key？点这里获取 →</a></div>
+    <div class="api-hint" id="key-hint">Key 仅在本地使用，不会上传。<br><a href="https://console.anthropic.com" target="_blank" id="key-link">没有 Key？点这里获取 →</a></div>
   </div>
   <button class="btn-primary" onclick="startApp()">开始训练</button>
   <p class="landing-footer">不是教你套路，是帮你找到真诚有效的沟通方式。<br>数据仅本地存储，不上传任何聊天记录。</p>
@@ -244,6 +254,7 @@ body { font-family: 'Noto Sans SC', sans-serif; background: var(--cream); color:
 
 <script>
 let apiKey = '';
+let provider = 'anthropic';
 let crush = {};
 let scene = '';
 let sceneGoal = '';
@@ -286,25 +297,59 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-async function callClaude(system, messages, maxTokens) {
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens: maxTokens || 400, system, messages })
-  });
-  if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || '请求失败'); }
-  const d = await r.json();
-  return d.content[0].text;
+async function callAI(system, messages, maxTokens) {
+  if (provider === 'anthropic') {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: maxTokens || 400, system, messages })
+    });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || '请求失败'); }
+    const d = await r.json();
+    return d.content[0].text;
+  } else if (provider === 'openai') {
+    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: maxTokens || 400, messages: [{ role: 'system', content: system }, ...messages] })
+    });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || '请求失败'); }
+    const d = await r.json();
+    return d.choices[0].message.content;
+  } else if (provider === 'deepseek') {
+    const r = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({ model: 'deepseek-chat', max_tokens: maxTokens || 400, messages: [{ role: 'system', content: system }, ...messages] })
+    });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || '请求失败'); }
+    const d = await r.json();
+    return d.choices[0].message.content;
+  }
+}
+
+// Alias for backward compatibility
+const callClaude = callAI;
+
+function switchProvider(p, el) {
+  provider = p;
+  document.querySelectorAll('.provider-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const configs = {
+    anthropic: { label: 'ANTHROPIC API KEY', placeholder: 'sk-ant-...', link: 'https://console.anthropic.com', linkText: '前往 console.anthropic.com 获取' },
+    openai:    { label: 'OPENAI API KEY',    placeholder: 'sk-...',     link: 'https://platform.openai.com/api-keys', linkText: '前往 platform.openai.com 获取' },
+    deepseek:  { label: 'DEEPSEEK API KEY',  placeholder: 'sk-...',     link: 'https://platform.deepseek.com',        linkText: '前往 platform.deepseek.com 获取' },
+  };
+  const c = configs[p];
+  document.getElementById('key-label').textContent = c.label;
+  document.getElementById('api-key-input').placeholder = c.placeholder;
+  document.getElementById('key-link').href = c.link;
+  document.getElementById('key-link').textContent = c.linkText;
 }
 
 function startApp() {
   const key = document.getElementById('api-key-input').value.trim();
-  if (!key.startsWith('sk-ant-')) { showToast('请输入有效的 API Key（以 sk-ant- 开头）'); return; }
+  if (!key) { showToast('请输入 API Key'); return; }
   apiKey = key;
   crush = {}; step = 0;
   renderStep();
